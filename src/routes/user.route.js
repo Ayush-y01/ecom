@@ -2,6 +2,8 @@ const express = require('express');
 const { body } = require('express-validator')
 const router = express.Router()
 const userController = require('../controllers/user.controller.js')
+const authMiddleware = require('../Middlewares/authMiddleware.js')
+
 
 
 router.post('/register',[
@@ -11,13 +13,16 @@ router.post('/register',[
     body('mobileNumber').isLength({ min:10, max:10}).withMessage('Invalid Mobile Number')
 ],
     userController.registerUser
-)
+);
 
 router.post('/login',[
     body('email').isEmail().withMessage('Invalid email'),
     body('password').isLength({ min:3 }).withMessage(' password must ab at least 3 character long')
 ],
     userController.loginUser
-)
+);      
+
+router.get('/profile', authMiddleware.authUser, userController.userProfile);
+router.get('/logout', authMiddleware.authUser, userController.logoutUser);
 
 module.exports = router;

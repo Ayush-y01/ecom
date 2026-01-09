@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema({
     firstName:{
@@ -27,20 +27,25 @@ const userSchema = new mongoose.Schema({
         require:true,
         minilength:[10, 'Phone number must be at least 3 character long'],
         
-    }
+    },
+    role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user"
+  }
 },{timestamps:true})
 
 
-userSchema.methods.generatetoken = function () {
-    const token = jwt.sign({ _id: this._id}, process.env.JWT_SECRET, { expiresIn: '24h' } );
+userSchema.methods.generateAuthToken = function() {
+    const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET, { expiresIn: '24h'});
     return token;
 }
-userSchema.methods.comparePassword = async function (password) {
+userSchema.methods.comparePassword = async function(password) {
     return await bcrypt.compare(password, this.password);
 }
 
-userSchema.statics.hashPassword = async function (password) {
-    return await bcrypt.hash(password, 10)
+userSchema.statics.hashPassword = async function(password) {
+    return await bcrypt.hash(password, 10);
 }
 
 const userModel = mongoose.model("User",userSchema)
