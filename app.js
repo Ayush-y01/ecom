@@ -3,8 +3,9 @@ dotenv.config();
 const express = require('express');
 const app = express()
 const ConnectDb = require('./src/Db/db.connection')
-const userRouter = require('./src/routes/user.route.js')
 const cookieParser = require('cookie-parser');
+const userRouter = require('./src/routes/user.route.js')
+const productRouter = require('./src/routes/product.route.js')
 
 ConnectDb();
 
@@ -17,6 +18,7 @@ app.get('/',(req,res) => {
 });
 
 app.use('/users', userRouter);
+app.use('/products', productRouter)
 
 
 module.exports = app;
