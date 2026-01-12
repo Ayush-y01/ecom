@@ -1,43 +1,70 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
-    itemName:{
-        type:String,
-        require:true
-    },
-    brandName:{
-        type:String,
-        require:true
-    },
-    idelFor:{
-        type:String,
-        enum:["Men","Women","Unisex","Other"],
-        default:""
-    },
-    articleNumber:{
+    name:{
         type:String,
         require:true,
-        unique:true
+        trim:true,
+        index:true
     },
-    itemDescription:{
+    description:{
         type:String,
         require: true
     },
-    itemPrice:{
+    price:{
         type:Number,
-        require:true
+        require:true,
+        min: 0
     },
-    variants: [
-    {
-      size: Number,      
-      color: String,   
-      hex: String,
-      stock: Number,
-      images: [String]
+    category:{
+        type:String,
+        require: true,
+        index:true
+    },
+    brand: {
+      type: String
+    },
+
+    images: [
+      {
+        type: String
+      }
+    ],
+    variant:{
+
+        color:{
+            type:String,
+            require: true,
+            trim:true
+        },
+        size:{
+            type:String,
+            require:true,
+            trim:true
+        },
+        stock:{
+            type:Number,
+            require:true,
+            min: 0
+        }
+    },
+    totalStock:{
+        type:Number,
+        default:0
+    },
+    isActive:{
+        type:Boolean,
+        default:true,
     }
-  ]
     
 },{timestamps: true})
+
+
+productSchema.index({
+    name:"text",
+    category:"text",
+    brand:"text"
+});
 
 const productModel = mongoose.model("Product", productSchema);
 
