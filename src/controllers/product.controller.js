@@ -25,7 +25,53 @@ module.exports.createProduct = async (req, res, next) => {
         totalStock
     })
 
-    const token = product.generateAuthToken()
+    const token = product.generateProductToken()
 
     res.status(201).json({token, product})
+}
+
+module.exports.updateProduct = async (req, res, next) => {
+    try {
+        const findProduct = await productModel.findByIdAndUpdate(
+            req.params._id,
+            req.body,
+            { new:true }
+        );
+
+        if (!findProduct) {
+            return res.status(404).json({ success:false ,message:'Product not Found!!!'})
+        }
+
+        return res.status(200).json({success:true, message:"product update successfully",data: findProduct})
+        
+    } catch (error) {
+        return res.status(400).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
+module.exports.deleteProduct = async (req, res, next) => {
+    try {
+        const deleteproduct = await productModel.findByIdAndDelete(req.params._id)
+
+        if (!deleteproduct) {
+            return res.status(404).json({
+                success:false,
+                message:"produt not found"
+            })
+        }
+
+        return res.status(200).json({
+            success:true,
+            message:"product delete successfully.."
+        })
+        
+    } catch (error) {
+        return res.status(400).json({
+            success:false,
+            message:error.message
+        })
+    }
 }

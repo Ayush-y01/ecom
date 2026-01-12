@@ -10,14 +10,15 @@ router.post('/product',[
     body("price").isFloat({min:3}),
     body("category").notEmpty(),
 
-
-    //variants 
-
     body("variants").isArray({min:1}),
     body("variants.*.color").notEmpty(),
     body("variants.*.size").notEmpty(),
     body("variants.*.stock").isInt({min:3})
 ] , productController.createProduct )
+
+router.put('/update', productController.updateProduct)
+
+router.put('/delete',productController.deleteProduct)
 
 
 module.exports = router

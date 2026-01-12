@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
@@ -65,6 +66,12 @@ productSchema.index({
     category:"text",
     brand:"text"
 });
+
+
+productSchema.methods.generateProductToken = function () {
+    const token = jwt.sign({_id: this._id}, process.env.JWT_SECRET, {expiresIn: '12h'})
+    return token;
+}
 
 const productModel = mongoose.model("Product", productSchema);
 
