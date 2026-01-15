@@ -16,9 +16,9 @@ router.post('/product',[
     body("variants.*.stock").isInt({min:3})
 ] , productController.createProduct )
 
-router.put('/update', productController.updateProduct)
+router.put('/update/:id', productController.updateProduct)
 
-router.put('/delete',productController.deleteProduct)
+router.put('/delete/:id',productController.deleteProduct)
 
 
 module.exports = router

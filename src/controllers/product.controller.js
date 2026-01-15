@@ -33,10 +33,11 @@ module.exports.createProduct = async (req, res, next) => {
 module.exports.updateProduct = async (req, res, next) => {
     try {
         const findProduct = await productModel.findByIdAndUpdate(
-            req.params._id,
+            req.params.id,
             req.body,
             { new:true }
         );
+
 
         if (!findProduct) {
             return res.status(404).json({ success:false ,message:'Product not Found!!!'})
@@ -54,7 +55,7 @@ module.exports.updateProduct = async (req, res, next) => {
 
 module.exports.deleteProduct = async (req, res, next) => {
     try {
-        const deleteproduct = await productModel.findByIdAndDelete(req.params._id)
+        const deleteproduct = await productModel.findByIdAndDelete(req.params.id)
 
         if (!deleteproduct) {
             return res.status(404).json({
