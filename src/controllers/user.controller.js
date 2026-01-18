@@ -9,7 +9,7 @@ module.exports.registerUser = async(req, res, next) => {
         return res.status(400).json({errors: errors.array() });
     }
 
-    const { firstName,lastName,email,password,mobileNumber} = req.body
+    const { name,email,password,mobileNumber} = req.body
 
     
     // const isUserAlreadyExist = userModel.findOne({ email });
@@ -21,8 +21,7 @@ module.exports.registerUser = async(req, res, next) => {
     const hashedPassword = await userModel.hashPassword(password) //this function also need to be done not dont yet...
 
     const user = await userService.createUser({
-        firstName,
-        lastName,
+        name,
         email,
         password: hashedPassword,
         mobileNumber
@@ -59,7 +58,7 @@ module.exports.loginUser = async (req, res, next) => {
 
   res.cookie('token', token);
 
-  res.status(200).json({ token, user });
+  res.status(200).json({ token, user, role:user.role });
 }
 
 module.exports.userProfile = async (req, res, next) => {
