@@ -1,6 +1,29 @@
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 
+
+
+const variantSchema = new mongoose.Schema({
+    size:{
+        type:String
+    },
+    color:{
+        type:String
+    },
+    price:{
+        type:Number
+    },
+    stock:{
+        type:Number,
+        default:0
+    },
+    sku:{
+        type:String,
+        unique:true,
+        require:true
+    }
+})
+
 const productSchema = new mongoose.Schema({
     name:{
         type:String,
@@ -8,51 +31,26 @@ const productSchema = new mongoose.Schema({
         trim:true,
         index:true
     },
+    brand:{
+        type:String
+    },
     description:{
         type:String,
-        require: true
     },
-    price:{
+    basePrice:{
         type:Number,
-        require:true,
-        min: 0
     },
     category:{
         type:String,
         require: true,
         index:true
     },
-    brand: {
-      type: String
-    },
-
     images: [
       {
         type: String
       }
     ],
-    variant:{
-
-        color:{
-            type:String,
-            require: true,
-            trim:true
-        },
-        size:{
-            type:String,
-            require:true,
-            trim:true
-        },
-        stock:{
-            type:Number,
-            require:true,
-            min: 0
-        }
-    },
-    totalStock:{
-        type:Number,
-        default:0
-    },
+    variants:[variantSchema],
     isActive:{
         type:Boolean,
         default:true,
@@ -66,6 +64,10 @@ productSchema.index({
     category:"text",
     brand:"text"
 });
+productSchema.index(
+    { name: 1, brand: 1 },
+    { unique:true }
+)
 
 
 productSchema.methods.generateProductToken = function () {

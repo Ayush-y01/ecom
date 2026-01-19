@@ -9,20 +9,31 @@ module.exports.createProduct = async (req, res, next) => {
         return res.status(400).json({ errors: errors.array() })
     }
 
-    const {name,description,price,category,brand,color,size,stock,totalStock} = req.body;
+    const {name,brand,variants} = req.body;
+    const exists = await productModel.findOne({name,brand})
+    if (exists) {
+        return res.status(401).json({
+            message:"product already exist!!"
+        })
+    }
+
+    const skuset = new Set()
+    for(let v of variants ){
+        if (skuset.has(v.sku)) {
+            return res.status(400).json({
+                message:"duplicate sku in variants.."
+            })
+        }
+        skuset.add(v.sku)
+    }
 
     const product = await ProductService.createProduct({
         name,
         description,
-        price,
+        basePrice,
         category,
         brand,
-        variant:{
-            color,
-            size,
-            stock
-        },
-        totalStock
+        variants,
     })
 
     const token = product.generateProductToken()
@@ -75,4 +86,58 @@ module.exports.deleteProduct = async (req, res, next) => {
             message:error.message
         })
     }
+}
+
+module.exports.searchProduct = async (req, res, next) => {
+    try {
+        const {keyword, category,minPrice, maxPrice, page= 1 } = req.query
+
+        const query = {};
+        
+        if(keyword){
+            query.$text = {$search:keyword}
+        }
+        if (category) {
+            query.category = category
+        }
+
+        if (minPrice || maxPrice) {
+            query.basePrice = {}
+            if(minPrice) query.baseprice.$gtr = Number(minPrice)
+            if(maxPrice) query.basePrice.$lte = Number(maxPrice)
+        }
+
+        const limit = 10
+        const skip = (page - 1) * limit;
+
+        const products = await productModel.find(query)
+            .skip(skip)
+            .limit(limit);
+        
+        const total = await productModel.countDocuments(query)
+
+
+        res.json({
+            success: true,  
+            total,
+            page:Number(page),
+            data: products  
+        })
+    } catch (error) {
+        return res.status(500).json({
+            messsage:error.message
+        })
+    }
+}
+
+module.exports.getSingleProduct = async (req, res, next) => {
+    const product = await productModel.findById(req.params.id);
+    if (!product) {
+        return res.status(404).json({
+            message:"product not found"
+        })
+    }
+    return res.status(200).json({
+        product 
+    })
 }
