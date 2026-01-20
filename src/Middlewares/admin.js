@@ -1,13 +1,20 @@
-const userModel = require('../models/user.model')
+const jwt = require("jsonwebtoken");
 
 module.exports = async function (req, res, next) {
-    const user = await userModel.findById(req.userId)
 
-    if (!user) {
-        return res.status(401).json({message:" user not fount!!"})
-    }
-    if (user.role !== 'admin') {
-        return res.status(401).json({message: "admin only"})
-    }
+  const token =
+    req.cookies?.token ||
+    req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Not logged in" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decoded.id;
     next();
-}
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid token" });
+  }
+};

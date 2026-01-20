@@ -9,7 +9,7 @@ const admin = require('../Middlewares/admin.js')
 router.post('/',[
     body("name").notEmpty().withMessage("Product name require"),
     body("description").notEmpty(),
-    body("price").isFloat({min:3}),
+    body("basePrice").isFloat({min:3}),
     body("category").notEmpty(),
 ] , authUser,admin,productController.createProduct )
 

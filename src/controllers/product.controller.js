@@ -4,41 +4,62 @@ const ProductService = require('../services/product.service.js');
 const userModel = require('../models/user.model.js')
 
 module.exports.createProduct = async (req, res, next) => {
+   try {
     const errors = validationResult(req);
-    if (!errors.isEmpty) {
-        return res.status(400).json({ errors: errors.array() })
+    if (!errors.isEmpty()) {   // ✅ FIX
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    const {name,brand,variants} = req.body;
-    const exists = await productModel.findOne({name,brand})
+    const { name, brand, variants, description, basePrice, category } = req.body;
+
+    /* ✅ Validate variants */
+    if (!Array.isArray(variants) || variants.length === 0) {
+      return res.status(400).json({
+        message: "Variants must be a non-empty array"
+      });
+    }
+
+    /* ❌ Prevent duplicate product */
+    const exists = await productModel.findOne({ name, brand });
     if (exists) {
-        return res.status(401).json({
-            message:"product already exist!!"
-        })
+      return res.status(409).json({   // ✅ FIX
+        message: "Product already exists"
+      });
     }
 
-    const skuset = new Set()
-    for(let v of variants ){
-        if (skuset.has(v.sku)) {
-            return res.status(400).json({
-                message:"duplicate sku in variants.."
-            })
-        }
-        skuset.add(v.sku)
+    /* ❌ Duplicate SKU check */
+    const skuSet = new Set();
+    for (let v of variants) {
+      if (!v.sku) {
+        return res.status(400).json({
+          message: "Each variant must have SKU"
+        });
+      }
+      if (skuSet.has(v.sku)) {
+        return res.status(400).json({
+          message: "Duplicate SKU in variants"
+        });
+      }
+      skuSet.add(v.sku);
     }
 
-    const product = await ProductService.createProduct({
-        name,
-        description,
-        basePrice,
-        category,
-        brand,
-        variants,
-    })
+    const product = await productModel.create({
+      name,
+      description,
+      basePrice,
+      category,
+      brand,
+      variants
+    });
 
-    const token = product.generateProductToken()
+    res.status(201).json({
+      success: true,
+      product
+    });
 
-    res.status(201).json({token, product})
+  } catch (err) {
+    next(err); // or res.status(500)
+  }
 }
 
 module.exports.updateProduct = async (req, res, next) => {

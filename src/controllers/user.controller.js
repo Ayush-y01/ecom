@@ -18,17 +18,22 @@ module.exports.registerUser = async(req, res, next) => {
     //     return res.status(400).json({ message: "user Already Exist!!!"})
     // }
 
-    const hashedPassword = await userModel.hashPassword(password) //this function also need to be done not dont yet...
+    const hashedPassword = await userModel.hashPassword(password) 
 
-    const user = await userService.createUser({
+    const user = await userModel.create({
         name,
         email,
         password: hashedPassword,
         mobileNumber
     })
 
-    const token = user.generateAuthToken() // this not done yet we need to create this function....
-    
+    const token = user.generateAuthToken() 
+  res.cookie("token", token, {
+    httpOnly: true,     // JS can't access
+    secure: false,      // true in HTTPS
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  });
     res.status(201).json({token, user})
 
 }
