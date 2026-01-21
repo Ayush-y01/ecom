@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const userRouter = require('./src/routes/user.route.js')
 const productRouter = require('./src/routes/product.route.js')
 const cartRouter = require('./src/routes/cart.route.js')
+const orderRouter = require('./src/routes/order.route.js')
 
 ConnectDb();
 
@@ -21,6 +22,7 @@ app.get('/',(req,res) => {
 app.use('/api/users', userRouter);
 app.use('/api/products', productRouter)
 app.use('/api/cart',cartRouter)
+app.use('/api/order',orderRouter)
 
 
 module.exports = app;
