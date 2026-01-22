@@ -41,7 +41,20 @@ const orderSchema = new mongoose.Schema({
     address:{
         type:String,
         require:true
-    }
+    },
+    paymentInfo: {
+        orderId: String,
+        paymentId: String,
+        signature: String
+    },
+
+    isPaid: {
+        type: Boolean,
+        default: false
+    },
+
+    paidAt: Date,
+
 },{timestamps:true})
 
 const orderModel = mongoose.model("Order", orderSchema);
