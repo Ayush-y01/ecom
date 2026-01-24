@@ -9,6 +9,8 @@ const productRouter = require('./src/routes/product.route.js')
 const cartRouter = require('./src/routes/cart.route.js')
 const orderRouter = require('./src/routes/order.route.js')
 const paymentRouter = require('./src/routes/payment.route.js')
+const couponRouter = require('./src/routes/coupon.route.js')
+const reviewRouter = require('./src/routes/review.route.js')
 
 ConnectDb();
 
@@ -25,6 +27,8 @@ app.use('/api/products', productRouter)
 app.use('/api/cart',cartRouter)
 app.use('/api/order',orderRouter)
 app.use('/api/payment',paymentRouter)
+app.use('/api/coupon',couponRouter)
+app.use('/api/review',reviewRouter)
 
 
 module.exports = app;
