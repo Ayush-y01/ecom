@@ -17,17 +17,21 @@ const variantSchema = new mongoose.Schema({
         type:Number,
         default:0
     },
+    reserved: {
+        type: Number,
+        default: 0
+    },
     sku:{
         type:String,
         unique:true,
-        require:true
+        required:true
     }
 })
 
 const productSchema = new mongoose.Schema({
     name:{
         type:String,
-        require:true,
+        required:true,
         trim:true,
         index:true
     },
@@ -42,7 +46,7 @@ const productSchema = new mongoose.Schema({
     },
     category:{
         type:String,
-        require: true,
+        required: true,
         index:true
     },
     images: [
