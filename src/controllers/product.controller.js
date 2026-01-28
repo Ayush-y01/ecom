@@ -6,28 +6,25 @@ const userModel = require('../models/user.model.js')
 module.exports.createProduct = async (req, res, next) => {
    try {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {   // ✅ FIX
+    if (!errors.isEmpty()) {   
       return res.status(400).json({ errors: errors.array() });
     }
 
     const { name, brand, variants, description, basePrice, category } = req.body;
 
-    /* ✅ Validate variants */
     if (!Array.isArray(variants) || variants.length === 0) {
       return res.status(400).json({
         message: "Variants must be a non-empty array"
       });
     }
 
-    /* ❌ Prevent duplicate product */
     const exists = await productModel.findOne({ name, brand });
     if (exists) {
-      return res.status(409).json({   // ✅ FIX
+      return res.status(409).json({   
         message: "Product already exists"
       });
     }
 
-    /* ❌ Duplicate SKU check */
     const skuSet = new Set();
     for (let v of variants) {
       if (!v.sku) {

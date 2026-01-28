@@ -13,7 +13,7 @@ module.exports.placeOrder = async (req, res) => {
     const cart = await Cart.findOne({ user: req.userId })
       .populate("items.product");
 
-    if (!cart || !cart.items || cart.items.length === 0) {
+    if (!cart || cart.items.length === 0) {
       return res.status(400).json({ message: "Cart is empty" });
     }
 
@@ -22,10 +22,6 @@ module.exports.placeOrder = async (req, res) => {
 
     for (let item of cart.items) {
       const product = item.product;
-
-      if (!product) {
-        return res.status(400).json({ message: "Product not found in cart" });
-      }
 
       const variant = product.variants.find(v => v.sku === item.sku);
 
@@ -50,27 +46,19 @@ module.exports.placeOrder = async (req, res) => {
       user: req.userId,
       items: orderItems,
       totalAmount: total,
-      address
+      address,
+      isPaid: false
     });
 
-    /*  Reduce Stock */
-    for (let item of cart.items) {
-      await Product.updateOne(
-        { _id: item.product._id, "variants.sku": item.sku },
-        { $inc: { "variants.$.stock": -item.quantity } }
-      );
-    }
+    await Cart.deleteOne({ user: req.userId });
 
-    /*  Clear Cart */
-    await Cart.findOneAndDelete({ user: req.userId });
-
-    return res.status(201).json(order);
+    res.status(201).json(order);
 
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
+
 
 
 
