@@ -52,6 +52,16 @@ const orderSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    returnStatus: {
+        type: String,
+        enum: ["NONE", "REQUESTED", "APPROVED", "REJECTED", "REFUNDED"],
+        default: "NONE"
+    },
+
+    refundInfo: {
+        refundId: String,
+        refundedAt: Date
+    },
 
     paidAt: Date,
 
