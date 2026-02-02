@@ -11,6 +11,11 @@ const orderRouter = require('./src/routes/order.route.js')
 const paymentRouter = require('./src/routes/payment.route.js')
 const couponRouter = require('./src/routes/coupon.route.js')
 const reviewRouter = require('./src/routes/review.route.js')
+const returnRouter = require('./src/routes/return.routes.js')
+const refundRouter = require('./src/routes/refund.routes.js')
+const adminDashboard = require('./src/routes/adminDashboard.route.js')
+const adminAnalyics = require('./src/routes/admin.analytics.routes.js')
+require("./src/config/redis.js");
 
 ConnectDb();
 
@@ -24,11 +29,15 @@ app.get('/',(req,res) => {
 
 app.use('/api/users', userRouter);
 app.use('/api/products', productRouter)
-app.use('/api/cart',cartRouter)
-app.use('/api/order',orderRouter)
-app.use('/api/payment',paymentRouter)
-app.use('/api/coupon',couponRouter)
-app.use('/api/review',reviewRouter)
+app.use('/api/cart', cartRouter)
+app.use('/api/order', orderRouter)
+app.use('/api/webhook', paymentRouter)
+app.use('/api/coupon', couponRouter)
+app.use('/api/review', reviewRouter)
+app.use('api/return', returnRouter)
+app.use('api/refund', refundRouter)
+app.use('/api/admin', adminDashboard)
+app.use('/api/admin/analytics', adminAnalyics)
 
 
 module.exports = app;
