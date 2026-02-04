@@ -1,6 +1,8 @@
 const Cart = require('../models/cart.model');
 const Order = require("../models/order.model");
 const Product = require("../models/product.model");
+const orderQueue = require("../queues/order.queue");
+
 
 module.exports.placeOrder = async (req, res) => {
   try {
@@ -49,6 +51,16 @@ module.exports.placeOrder = async (req, res) => {
       address,
       isPaid: false
     });
+
+      await orderQueue.add(
+      { orderId: order._id, userId: req.userId },
+      {
+        attempts: 3,
+        backoff: { type: "fixed", delay: 5000 },
+        removeOnComplete: true,
+        removeOnFail: false
+      }
+    );
 
     await Cart.deleteOne({ user: req.userId });
 
