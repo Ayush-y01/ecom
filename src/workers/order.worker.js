@@ -7,6 +7,12 @@ const orderQueue = new Queue("order-queue", {
     }
 })
 // console.log("📦 Order worker started");
-orderQueue.process(async (job) => {
+orderQueue.process("order-email", async (job) => {
+    console.log("📧 Sending order email:", job.data.orderId);
     await new Promise((res) => setTimeout(res, 3000))
+})
+
+orderQueue.process("analytics", async (job) => {
+    console.log("📊 Updating analytics for:", job.data.orderId);
+    await new Promise((res) => setTimeout(res, 1500))
 })

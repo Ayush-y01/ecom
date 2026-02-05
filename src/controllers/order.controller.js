@@ -53,6 +53,7 @@ module.exports.placeOrder = async (req, res) => {
     });
 
       await orderQueue.add(
+        "order-email",
       { orderId: order._id, userId: req.userId },
       {
         attempts: 3,
@@ -61,6 +62,13 @@ module.exports.placeOrder = async (req, res) => {
         removeOnFail: false
       }
     );
+
+    await orderQueue.add(
+      "analytics",
+      {
+        orderId : order._id
+      }
+    )
 
     await Cart.deleteOne({ user: req.userId });
 
