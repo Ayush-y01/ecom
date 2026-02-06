@@ -15,6 +15,8 @@ const returnRouter = require('./src/routes/return.routes.js')
 const refundRouter = require('./src/routes/refund.routes.js')
 const adminDashboard = require('./src/routes/adminDashboard.route.js')
 const adminAnalyics = require('./src/routes/admin.analytics.routes.js')
+
+const bullBoard = require('./src/bullDashboard.js')
 require("./src/config/redis.js");
 
 ConnectDb();
@@ -38,6 +40,8 @@ app.use('api/return', returnRouter)
 app.use('api/refund', refundRouter)
 app.use('/api/admin', adminDashboard)
 app.use('/api/admin/analytics', adminAnalyics)
+
+app.use("/admin/queues", bullBoard.getRouter())
 
 
 module.exports = app;

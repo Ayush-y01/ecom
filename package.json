@@ -10,6 +10,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@bull-board/api": "^6.16.4",
+    "@bull-board/express": "^6.16.4",
     "bcrypt": "^6.0.0",
     "bull": "^4.16.5",
     "cookie-parser": "^1.4.7",
