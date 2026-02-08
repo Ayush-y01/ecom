@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  backend:
+    build: .
+    container_name: ecom-backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - REDIS_HOST=redis
+      - MONGODB_URI=mongodb://mongo:27017/ecom-test
+    depends_on:
+      - redis
+      - mongo
+
+  redis:
+    image: redis:7
+    container_name: ecom-redis
+    ports:
+      - "6379:6379"
+
+  mongo:
+    image: mongo:6
+    container_name: ecom-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
